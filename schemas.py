@@ -1,19 +1,25 @@
-from typing import Union
+from typing import Union, Optional
 
 from pydantic import BaseModel
 
 
-class TableBase(BaseModel):
-    test_column: str
+class ProductBase(BaseModel):
+    name: str
+    category: str
+    description: str
+    price: float
 
 
-class TableCreate(TableBase):
+class ProductCreate(ProductBase):
     pass
 
 
-class Table(TableBase):
+class Product(ProductBase):
     id: int
-    test_column: str
+    name: str
+    category: str
+    description: Optional[str] = None
+    price: int
 
     class Config:
         orm_mode = True

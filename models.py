@@ -1,11 +1,14 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float
 from sqlalchemy.orm import relationship
 
 from database import Base
 
 
-class Table(Base):
-    __tablename__ = "test_table"
+class Product(Base):
+    __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
-    test_column = Column(String, index=True)
+    name = Column(String)
+    category = Column(String)
+    description = Column(String, nullable=True)
+    price = Column(Float)

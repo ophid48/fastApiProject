@@ -4,10 +4,23 @@ import models
 import schemas
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
+from fastapi.middleware.cors import CORSMiddleware
 
 from uuid import uuid4
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:4200",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def get_db():
@@ -21,17 +34,23 @@ def get_db():
 models.Base.metadata.create_all(bind=engine)
 
 
-@app.post("/tables/", response_model=schemas.Table)
-async def create_table(table: schemas.TableCreate, db: Session = Depends(get_db)):
-    db_table = crud.get_tables_by_column_name(db, table.test_column)
-    if db_table:
-        raise HTTPException(status_code=400, detail="Email is already")
-    return crud.create_table_item(db=db, item=table)
+# @app.post("/tables/", response_model=schemas.Table)
+# async def create_table(table: schemas.TableCreate, db: Session = Depends(get_db)):
+#     db_table = crud.get_tables_by_column_name(db, table.test_column)
+#     if db_table:
+#         raise HTTPException(status_code=400, detail="Email is already")
+#     return crud.create_table_item(db=db, item=table)
+#
+#
+# @app.get("/tables/", response_model=list[schemas.Table])
+# async def create_table(db: Session = Depends(get_db)):
+#     tables = crud.get_tables(db)
+#     return tables
 
 
-@app.get("/tables/", response_model=list[schemas.Table])
+@app.get("/api/v1/products/", response_model=list[schemas.Product])
 async def create_table(db: Session = Depends(get_db)):
-    tables = crud.get_tables(db)
+    tables = crud.get_products(db)
     return tables
 
 
