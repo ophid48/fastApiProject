@@ -23,3 +23,34 @@ class Product(ProductBase):
 
     class Config:
         orm_mode = True
+
+
+class Login(BaseModel):
+    login: str
+    password: str
+
+
+class LoginResult(BaseModel):
+    result: bool
+
+
+class UserBase(BaseModel):
+    LastName: str
+    FirstName: Optional[str] = None
+    login: str
+    password: str
+
+
+class UserCreate(UserBase):
+    pass
+
+
+class User(BaseModel):
+    id: int
+    LastName: str
+    FirstName: Optional[str] = None
+    login: str
+    password: str
+
+
+

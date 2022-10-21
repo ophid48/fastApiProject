@@ -12,3 +12,13 @@ class Product(Base):
     category = Column(String)
     description = Column(String, nullable=True)
     price = Column(Float)
+
+
+class User(Base):
+    __tablename__ = "Users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    LastName = Column(String)
+    FirstName = Column(String, nullable=True)
+    login = Column(String)
+    password = Column(String)
