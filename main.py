@@ -1,6 +1,7 @@
-from fastapi import Depends, FastAPI, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, FastAPI, HTTPException, Security
+from fastapi.security import OAuth2PasswordBearer, HTTPAuthorizationCredentials, HTTPBearer
 
+import auth
 import crud
 import models
 import schemas
@@ -11,6 +12,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import bcrypt
 
 app = FastAPI()
+
+security = HTTPBearer()
 
 origins = [
     "http://localhost:4200",
@@ -49,18 +52,23 @@ models.Base.metadata.create_all(bind=engine)
 #     return tables
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
-@app.get("/items/")
-async def read_items(token: str = Depends(oauth2_scheme)):
-    return {"token": token}
-
-
 @app.get("/api/v1/products/", response_model=list[schemas.Product])
 async def create_table(db: Session = Depends(get_db)):
     tables = crud.get_products(db)
     return tables
+
+
+# @app.post("/signup/")
+# async def login(user_data: schemas.Login, db: Session = Depends(get_db)):
+#     if login:
+#         user = crud.get_user_by_login(db, user_data.login)
+#         if not user:
+#             raise HTTPException(status_code=400, detail="Login or pass not found")
+#         hash_pass = bytes.decode(bcrypt.hashpw(str.encode(user_data.password), str.encode(user.password)))
+#         if hash_pass == user.password:
+#             access_token = auth.encode_token(hash_pass)
+#             return True
+#     return False
 
 
 @app.post("/login/")
@@ -69,17 +77,32 @@ async def login(user_data: schemas.Login, db: Session = Depends(get_db)):
         user = crud.get_user_by_login(db, user_data.login)
         if not user:
             raise HTTPException(status_code=400, detail="Login or pass not found")
-        user_data.password = bytes.decode(bcrypt.hashpw(str.encode(user_data.password), str.encode(user.password)))
-        if user_data.password == user.password:
-            return True
+        hash_pass = bytes.decode(bcrypt.hashpw(str.encode(user_data.password), str.encode(user.password)))
+        if hash_pass == user.password:
+            access_token = auth.encode_token(hash_pass)
+            refresh_token = auth.encode_refresh_token(hash_pass)
+            return {'access_token': access_token, 'refresh_token': refresh_token}
+        else:
+            raise HTTPException(status_code=400, detail="Login or pass not found")
     return False
 
 
+@app.get('/refresh_token/')
+def refresh_user_token(credentials: HTTPAuthorizationCredentials = Security(security)):
+    refresh_token = credentials.credentials
+    new_token = auth.decode_refresh_token(refresh_token)
+    return {'access_token': new_token}
+
+
 @app.post("/users/", response_model=schemas.User)
-async def login(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    if login:
-        user = schemas.User(**crud.create_user(db, user).__dict__)
-        return user
+async def login(user: schemas.UserCreate, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security)):
+    token = credentials.credentials
+    if user:
+        if auth.decode_token(token):
+            user = schemas.User(**crud.create_user(db, user).__dict__)
+            return user
+        else:
+            return 'Invalid token'
     raise HTTPException(status_code=400, detail="Login is already")
 
 
