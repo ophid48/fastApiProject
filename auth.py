@@ -19,10 +19,10 @@ def encode_token(username):
     )
 
 
-def decode_token(token):
+def decode_token(token, is_secret):
     try:
         payload = jwt.decode(token, secret, algorithms=['HS256'])
-        if payload['scope'] == 'access_token':
+        if payload['scope'] == 'access_token' or is_secret:
             return payload['sub']
         raise HTTPException(status_code=401, detail='Scope for the token is invalid')
     except jwt.ExpiredSignatureError:

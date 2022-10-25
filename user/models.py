@@ -4,11 +4,11 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 
-class Product(Base):
-    __tablename__ = "product"
+class User(Base):
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    category = Column(String)
-    description = Column(String, nullable=True)
-    price = Column(Float)
+    first_name = Column(String)
+    last_name = Column(String, nullable=True)
+    login = Column(String)
+    password = Column(String)
