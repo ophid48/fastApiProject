@@ -44,8 +44,7 @@ class JoinedProduct(BaseModel):
     product_name: str
     description: Optional[str] = None
     price: float
-    categoryId: int
-    category_name: str
+    category: Category
 
     class Config:
         orm_mode = True

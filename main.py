@@ -12,9 +12,6 @@ import orders.main
 from orders import models as order_model
 
 
-
-
-
 app = FastAPI()
 
 

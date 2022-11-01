@@ -15,7 +15,7 @@ def get_categories(db: Session, skip: int = 0, limit: int = 100):
 
 
 def get_joined_products(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.JoinedProduct).all()
+    return db.query(models.Product).all()
 
 
 def get_category_by_id(db: Session, category_id: int):

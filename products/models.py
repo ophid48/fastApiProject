@@ -13,12 +13,15 @@ class Product(Base):
     description = Column(String, nullable=True)
     price = Column(Float)
 
+    category = relationship("Category", back_populates="products")
 
 class Category(Base):
     __tablename__ = "category"
 
     category_id = Column(Integer, primary_key=True, index=True)
     category_name = Column(String)
+
+    products = relationship("Product", back_populates="category", cascade="all, delete-orphan")
 
 
 # class JoinedProduct(MetaData):

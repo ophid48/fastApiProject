@@ -9,4 +9,5 @@ def get_db():
     finally:
         db.close()
 
+
 security = HTTPBearer()
