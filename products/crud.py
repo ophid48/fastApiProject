@@ -1,27 +1,37 @@
 from sqlalchemy.orm import Session
 
-import models
-import schemas
+import products.models as models
+import products.schemas as schemas
 
 import bcrypt
 
 
 def get_products(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Product).order_by('id').offset(skip).limit(limit).all()
+    return db.query(models.Product).join(models.Category).all()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).order_by('id').offset(skip).limit(limit).all()
+def get_categories(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Category).order_by('category_id').offset(skip).limit(limit).all()
 
 
-def get_user_by_login(db: Session, login: str):
-    return db.query(models.User).filter(models.User.login == login).first()
+def get_joined_products(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.JoinedProduct).all()
 
 
-def create_user(db: Session, user: schemas.UserCreate):
-    db_item = models.User(**user.dict())
-    salt = bcrypt.gensalt()
-    db_item.password = bcrypt.hashpw(str.encode(db_item.password), salt)
+def get_category_by_id(db: Session, category_id: int):
+    return db.query(models.Category).filter(models.Category.id == category_id).first()
+
+
+def create_product(product: schemas.ProductCreate, db: Session):
+    db_item = models.Product(**product.dict())
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+
+def create_category(category: schemas.CategoryCreate, db: Session, skip: int = 0, limit: int = 100):
+    db_item = models.Category(**category.dict())
     db.add(db_item)
     db.commit()
     db.refresh(db_item)

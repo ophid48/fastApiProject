@@ -6,16 +6,26 @@ import user.schemas as schemas
 import bcrypt
 
 
-def get_products(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Product).order_by('id').offset(skip).limit(limit).all()
-
-
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).order_by('id').offset(skip).limit(limit).all()
 
 
 def get_user_by_login(db: Session, login: str):
     return db.query(models.User).filter(models.User.login == login).first()
+
+
+def get_user_by_id(db: Session, user_id: int):
+    return db.query(models.User).filter(models.User.id == user_id).first()
+
+
+def delete_user_by_id(db: Session, user_id: int):
+    db.query(models.User).filter(models.User.id == user_id).first().delete()
+    db.commit()
+    return True
+
+
+def patch_user(db: Session, usur: schemas.UserCreate):
+    pass
 
 
 def create_user(db: Session, user: schemas.UserCreate):

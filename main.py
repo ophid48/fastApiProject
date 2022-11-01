@@ -1,9 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from database import engine
 
 import user.main
-from database import engine
 from user import models as user_model
+
+import products.main
+from products import models as product_model
+
+import orders.main
+from orders import models as order_model
+
+
+
+
 
 app = FastAPI()
 
@@ -22,5 +32,9 @@ app.add_middleware(
 
 
 user_model.Base.metadata.create_all(bind=engine)
+product_model.Base.metadata.create_all(bind=engine)
+order_model.Base.metadata.create_all(bind=engine)
 
 app.include_router(user.main.router)
+app.include_router(products.main.router)
+app.include_router(orders.main.router)

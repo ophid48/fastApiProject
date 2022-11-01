@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "mssql+pyodbc://admin:admin@NIKITA-PC/test?driver=SQL+Server+Native+Client+11.0"
+SQLALCHEMY_DATABASE_URL = "mssql+pyodbc://admin:admin@192.168.1.2:1433/test?driver=SQL+Server+Native+Client+11.0"
 
 
 engine = create_engine(
