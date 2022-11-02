@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class CategoryBase(BaseModel):
-    name: str
+    category_name: str
 
 
 class CategoryCreate(CategoryBase):
@@ -12,39 +12,33 @@ class CategoryCreate(CategoryBase):
 
 
 class Category(CategoryBase):
-    id: int
+    category_id: int
 
     class Config:
         orm_mode = True
 
 
 class ProductBase(BaseModel):
-    name: str
-    description: str
-    price: float
-
-
-class ProductCreate(ProductBase):
-    categoryId: int
-
-
-class Product(ProductBase):
-    id: int
-    name: str
-    categoryId: int
-    description: Optional[str] = None
-    price: int
-
-    class Config:
-        orm_mode = True
-
-
-class JoinedProduct(BaseModel):
-    product_id: int
     product_name: str
     description: Optional[str] = None
     price: float
-    category: Category
+    categoryId: int
+
+
+class ProductCreate(ProductBase):
+    pass
+
+
+class Product(ProductBase):
+    product_id: int
 
     class Config:
         orm_mode = True
+
+
+class JoinedProduct(Product):
+    category: Category
+
+
+class JoinedCategory(CategoryBase):
+    products: List[Product] = []

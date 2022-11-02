@@ -21,7 +21,7 @@ class Category(Base):
     category_id = Column(Integer, primary_key=True, index=True)
     category_name = Column(String)
 
-    products = relationship("Product", back_populates="category", cascade="all, delete-orphan")
+    products = relationship("Product", back_populates="category", cascade="all")
 
 
 # class JoinedProduct(MetaData):

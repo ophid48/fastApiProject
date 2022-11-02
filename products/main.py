@@ -13,23 +13,21 @@ router = APIRouter(
 )
 
 
-@router.get("/joined_products")
+@router.get("/joined_products", response_model=list[schemas.JoinedProduct])
 async def get_products(db: Session = Depends(get_db)):
     products = crud.get_joined_products(db)
-
-    for i in products:
-        print(i.category)
     return products
 
 
 @router.get("/categories", response_model=list[schemas.Category])
-async def get_products(db: Session = Depends(get_db)):
-    products = crud.get_categories(db)
-    return products
+async def get_categories(db: Session = Depends(get_db)):
+    categories = crud.get_categories(db)
+
+    return categories
 
 
 @router.post("/categories", response_model=schemas.Category)
-async def get_products(category: schemas.CategoryCreate, db: Session = Depends(get_db)):
+async def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db)):
     products = crud.create_category(category, db)
     return products
 

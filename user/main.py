@@ -64,23 +64,22 @@ def refresh_user_token(credentials: HTTPAuthorizationCredentials = Security(secu
 async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if user:
-        if auth.decode_token(token, True):
+        # if auth.decode_token(token, True):
             user = crud.create_user(db, user)
             return user
-        else:
-            return 'Invalid token'
+        # else:
+            # return 'Invalid token'
     raise HTTPException(status_code=400, detail="Login is already")
 
 
 @router.get("/", response_model=list[schemas.User])
 async def get_users(db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
-    print(token)
-    if auth.decode_token(token, True):
-        users = crud.get_users(db)
-        return users
-    else:
-        return 'Invalid token'
+    # if auth.decode_token(token, True):
+    users = crud.get_users(db)
+    return users
+    # else:
+    #     return 'Invalid token'
 
 
 @router.delete("/{user_id}")

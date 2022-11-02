@@ -1,13 +1,14 @@
 from sqlalchemy.orm import Session
 
 import products.models as models
+from products.models import Product, Category
 import products.schemas as schemas
 
 import bcrypt
 
 
 def get_products(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Product).join(models.Category).all()
+    return db.query(models.Product).all()
 
 
 def get_categories(db: Session, skip: int = 0, limit: int = 100):
@@ -15,7 +16,8 @@ def get_categories(db: Session, skip: int = 0, limit: int = 100):
 
 
 def get_joined_products(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Product).all()
+    return db.query(Product).join(Category.products).all()
+    # return db.query(Product, Category).filter(Product.categoryId == Category.category_id).all()
 
 
 def get_category_by_id(db: Session, category_id: int):
