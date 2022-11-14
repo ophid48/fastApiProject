@@ -12,10 +12,11 @@ class CategoryCreate(CategoryBase):
 
 
 class Category(CategoryBase):
-    category_id: int
+    id: int
 
     class Config:
         orm_mode = True
+
 
 
 class ProductBase(BaseModel):
@@ -30,15 +31,15 @@ class ProductCreate(ProductBase):
 
 
 class Product(ProductBase):
-    product_id: int
+    id: int
 
     class Config:
         orm_mode = True
 
 
+class JoinedCategory(Category):
+    products: List[Product]
+
+
 class JoinedProduct(Product):
     category: Category
-
-
-class JoinedCategory(CategoryBase):
-    products: List[Product] = []
