@@ -39,3 +39,4 @@ def delete_item_by_id(db: Session, api_model, item_id):
     db.delete(db_item)
     db.commit()
     return True
+

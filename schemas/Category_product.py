@@ -18,11 +18,14 @@ class Category(CategoryBase):
         orm_mode = True
 
 
-
 class ProductBase(BaseModel):
     product_name: str
     description: Optional[str] = None
     price: float
+    material: Optional[str] = None
+    size: Optional[str] = None
+    weight: Optional[float] = None
+    colors: Optional[str] = None
     categoryId: int
 
 
@@ -37,9 +40,10 @@ class Product(ProductBase):
         orm_mode = True
 
 
+class JoinedProduct(Product):
+    category: Category
+
+
 class JoinedCategory(Category):
     products: List[Product]
 
-
-class JoinedProduct(Product):
-    category: Category

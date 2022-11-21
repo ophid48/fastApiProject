@@ -11,7 +11,7 @@ from dependencies import get_db, security
 from fastapi import APIRouter
 
 router = APIRouter(
-    prefix="/api/v1/product"
+    prefix="/api/v1/products"
 )
 
 
