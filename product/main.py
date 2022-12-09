@@ -28,12 +28,12 @@ async def get_products(db: Session = Depends(get_db)):
     return dependencies.get(models.Product, db)
 
 
-@router.post("/", tags=["Product"])
+@router.post("/", tags=["Product"], response_model=schemas.JoinedProduct)
 async def post_product(item: schemas.ProductCreate, db: Session = Depends(get_db)):
     return dependencies.post(item, models.Product, db)
 
 
-@router.put("/{product_id}", tags=["Product"], response_model=schemas.Product)
+@router.put("/{product_id}", tags=["Product"], response_model=schemas.JoinedProduct)
 async def put_product(product_id, item: schemas.ProductCreate, db: Session = Depends(get_db)):
     return dependencies.put(product_id, item, models.Product, db)
 

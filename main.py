@@ -17,6 +17,9 @@ from category import models as category_model
 import status.main
 from status import models as status_model
 
+import roles.main
+from roles import models as roles_model
+
 
 app = FastAPI()
 
@@ -39,6 +42,7 @@ product_model.Base.metadata.create_all(bind=engine)
 order_model.Base.metadata.create_all(bind=engine)
 category_model.Base.metadata.create_all(bind=engine)
 status_model.Base.metadata.create_all(bind=engine)
+roles_model.Base.metadata.create_all(bind=engine)
 
 
 app.include_router(user.main.router)
@@ -46,4 +50,5 @@ app.include_router(product.main.router)
 app.include_router(order.main.router)
 app.include_router(category.main.router)
 app.include_router(status.main.router)
+app.include_router(roles.main.router)
 

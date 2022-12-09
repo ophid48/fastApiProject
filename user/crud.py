@@ -2,8 +2,13 @@ from sqlalchemy.orm import Session
 
 import user.models as models
 import user.schemas as schemas
+from roles.models import Role
 
 import bcrypt
+
+
+def get_joined_users(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.User).join(Role.users).all()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
@@ -15,7 +20,7 @@ def get_user_by_login(db: Session, login: str):
 
 
 def get_user_by_id(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.user_id == user_id).first()
+    return db.query(models.User).filter(models.User.id == user_id).first()
 
 
 def delete_user_by_id(db: Session, user_id: int):

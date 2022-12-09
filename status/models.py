@@ -4,8 +4,6 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 
-
-
 class Status(Base):
     __tablename__ = "status"
 

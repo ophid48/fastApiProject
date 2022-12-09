@@ -3,6 +3,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 import auth
 import config
+import dependencies
+import roles.models
 import user.crud as crud
 import user.models as models
 import user.schemas as schemas
@@ -53,36 +55,36 @@ async def login(user_data: schemas.Login, db: Session = Depends(get_db)):
     return False
 
 
-@router.get('/refresh_token/')
+@router.get('/refresh_token/', tags=["User"])
 def refresh_user_token(credentials: HTTPAuthorizationCredentials = Security(security)):
     refresh_token = credentials.credentials
     new_token = auth.decode_refresh_token(refresh_token)
     return {'access_token': new_token}
 
 
-@router.post("/", response_model=schemas.User)
-async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security)):
-    token = credentials.credentials
+@router.post("/", tags=["User"], response_model=schemas.User)
+async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    role = dependencies.get_by_id(user.role_id, roles.models.Role, db)
+    if not role:
+        raise HTTPException(status_code=400, detail="Role not found")
     if user:
         # if auth.decode_token(token, True):
-            user = crud.create_user(db, user)
-            return user
+        return crud.create_user(db, user)
         # else:
             # return 'Invalid token'
     raise HTTPException(status_code=400, detail="Login is already")
 
 
-@router.get("/", response_model=list[schemas.User])
-async def get_users(db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security)):
-    token = credentials.credentials
+@router.get("/", tags=["User"], response_model=list[schemas.User])
+async def get_users(db: Session = Depends(get_db)):
+
     # if auth.decode_token(token, True):
-    users = crud.get_users(db)
-    return users
+    return crud.get_joined_users(db)
     # else:
     #     return 'Invalid token'
 
 
-@router.delete("/{user_id}")
+@router.delete("/{user_id}", tags=["User"])
 async def delete_user(user_id: int, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security)):
     user = crud.get_user_by_id(db, user_id)
     if not user:
@@ -93,10 +95,10 @@ async def delete_user(user_id: int, db: Session = Depends(get_db), credentials: 
 
 
 @router.patch("/{user_id}", response_model=schemas.User)
-async def patch_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security)):
+async def patch_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_id(db, user_id)
     if not db_user:
-        raise HTTPException(status_code=404, detail="Hero not found")
+        raise HTTPException(status_code=404, detail="User not found")
     user_data = user.dict(exclude_unset=True)
     if user.password == '':
         user_data["password"] = db_user["password"]

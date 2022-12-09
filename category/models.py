@@ -11,3 +11,4 @@ class Category(Base):
     category_name = Column(String)
 
     products = relationship("Product", back_populates="category", cascade="all")
+

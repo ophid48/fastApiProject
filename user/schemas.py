@@ -3,6 +3,7 @@ from typing import Union, Optional
 from pydantic import BaseModel
 
 import config
+from roles.schemas import Role
 
 
 class Login(BaseModel):
@@ -19,18 +20,21 @@ class UserBase(BaseModel):
     first_name: Optional[str] = None
     login: str
     password: str
+    avatar: Optional[str] = None
+    wallpaper: Optional[str] = None
+    number: str
+    email: str
+    address: str
 
 
 class UserCreate(UserBase):
-    pass
+    role_id: int
 
 
 class User(UserBase):
-    user_id: int
-    last_name: str
-    first_name: Optional[str] = None
-    login: str
-    password: str
+    id: int
+
+    role: Role
 
     class Config:
         orm_mode = True
