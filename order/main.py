@@ -12,7 +12,7 @@ import order.crud as crud
 from fastapi import APIRouter
 
 router = APIRouter(
-    prefix="/api/v1/order"
+    prefix="/api/v1/orders"
 )
 
 

@@ -8,6 +8,7 @@ import roles.models
 import user.crud as crud
 import user.models as models
 import user.schemas as schemas
+import roles.schemas
 from sqlalchemy.orm import Session
 from dependencies import get_db, security
 from database import SessionLocal, engine
@@ -39,19 +40,19 @@ def check_secret(input_secret):
 #     return False
 
 
-@router.post("/login/")
-async def login(user_data: schemas.Login, db: Session = Depends(get_db)):
+@router.post("/login/", response_model=schemas.LoginResult)
+def login(user_data: schemas.Login, db: Session = Depends(get_db)):
     if login:
         user = crud.get_user_by_login(db, user_data.login)
         if not user:
-            raise HTTPException(status_code=400, detail="Login or pass not found")
+            raise HTTPException(status_code=400, detail="Login or pass not found1")
         hash_pass = bytes.decode(bcrypt.hashpw(str.encode(user_data.password), str.encode(user.password)))
         if hash_pass == user.password:
             access_token = auth.encode_token(hash_pass)
             refresh_token = auth.encode_refresh_token(hash_pass)
-            return {'access_token': access_token, 'refresh_token': refresh_token}
+            return {'access_token': access_token, 'refresh_token': refresh_token, 'user': user}
         else:
-            raise HTTPException(status_code=400, detail="Login or pass not found")
+            raise HTTPException(status_code=400, detail="Login or pass not found2")
     return False
 
 
@@ -95,18 +96,23 @@ async def delete_user(user_id: int, db: Session = Depends(get_db), credentials: 
 
 
 @router.patch("/{user_id}", response_model=schemas.User)
-async def patch_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(get_db)):
+async def patch_user(user_id: int, user: schemas.UserPatch, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_id(db, user_id)
+    role_id = user.role.id
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
     user_data = user.dict(exclude_unset=True)
+    role = dependencies.get_by_id(role_id, roles.models.Role, db)
     if user.password == '':
         user_data["password"] = db_user["password"]
     else:
         salt = bcrypt.gensalt()
         user_data["password"] = bcrypt.hashpw(str.encode(user_data["password"]), salt)
     for key, value in user_data.items():
-        setattr(db_user, key, value)
+        if key == 'role':
+            setattr(db_user, key, role)
+        else:
+            setattr(db_user, key, value)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

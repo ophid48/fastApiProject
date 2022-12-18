@@ -13,9 +13,11 @@ class Order(Base):
     country = Column(String)
     zip = Column(String)
     statusid = Column(Integer, ForeignKey("status.id"))
+    desc = Column(String)
 
     status = relationship("Status", back_populates="orders")
     products = relationship("Product", secondary="order_product", back_populates='orders')
+    users = relationship("User", secondary="order_user", back_populates='orders')
 
 
 # order_product = Table('order_product', Base.metadata,
@@ -29,3 +31,10 @@ class order_product(Base):
 
     orderid = Column(Integer, ForeignKey("order.id"), primary_key=True)
     productid = Column(Integer, ForeignKey("product.id"), primary_key=True)
+
+
+class order_user(Base):
+    __tablename__ = "order_user"
+
+    order_id = Column(Integer, ForeignKey("order.id"), primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"), primary_key=True)

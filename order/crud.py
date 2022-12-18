@@ -6,7 +6,8 @@ from status.models import Status
 
 def get_joined_orders(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Order)\
-        .options(joinedload(models.Order.products)).all()
+        .options(joinedload(models.Order.products))\
+        .options(joinedload(models.Order.users)).all()
 
 
 def get_full_order_by_id(db: Session, item_id: int, skip: int = 0, limit: int = 100):

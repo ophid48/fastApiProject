@@ -3,6 +3,7 @@ from typing import Union, Optional
 from pydantic import BaseModel
 
 from schemas.Category_product import Product
+from user.schemas import User
 
 
 class OrderProductBase(BaseModel):
@@ -31,10 +32,12 @@ class OrderBase(BaseModel):
     country: str
     zip: str
     statusid: int
+    desc: Optional[str] = None
 
 
 class OrderCreate(OrderBase):
     products: list[int]
+    users: list[int]
 
 
 class Order(OrderBase):
@@ -48,3 +51,4 @@ class Order(OrderBase):
 
 class JoinedOrder(Order):
     products: list[Product]
+    users: list[User]

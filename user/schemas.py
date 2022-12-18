@@ -11,13 +11,9 @@ class Login(BaseModel):
     password: str
 
 
-class LoginResult(BaseModel):
-    result: bool
-
-
 class UserBase(BaseModel):
-    last_name: str
-    first_name: Optional[str] = None
+    first_name: str
+    last_name: Optional[str] = None
     login: str
     password: str
     avatar: Optional[str] = None
@@ -40,4 +36,12 @@ class User(UserBase):
         orm_mode = True
 
 
+class UserPatch(UserBase):
+    role: Role
+
+
+class LoginResult(BaseModel):
+    access_token: str
+    refresh_token: str
+    user: User
 
