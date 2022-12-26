@@ -11,6 +11,11 @@ class OrderProductBase(BaseModel):
     orderid: int
 
 
+class OrderUserBase(BaseModel):
+    user_id: int
+    order_id: int
+
+
 class StatusBase(BaseModel):
     status_name: str
 
@@ -37,7 +42,12 @@ class OrderBase(BaseModel):
 
 class OrderCreate(OrderBase):
     products: list[int]
-    users: list[int]
+    owner: int
+
+
+class OrderPatch(OrderBase):
+    owner: int
+    courier: Optional[int] = None
 
 
 class Order(OrderBase):
@@ -50,5 +60,5 @@ class Order(OrderBase):
 
 
 class JoinedOrder(Order):
-    products: list[Product]
-    users: list[User]
+    products: Optional[list[Product]] = None
+    users: Optional[list[User]] = None

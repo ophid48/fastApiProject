@@ -14,7 +14,7 @@ class Product(Base):
     price = Column(Float)
     material = Column(String, nullable=True)
     size = Column(String, nullable=True)
-    weight = Column(Float, nullable=True)
+    weight = Column(String, nullable=True)
     colors = Column(String, nullable=True)
 
     category = relationship("Category", back_populates="products")

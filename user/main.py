@@ -95,22 +95,24 @@ async def delete_user(user_id: int, db: Session = Depends(get_db), credentials: 
     return True
 
 
-@router.patch("/{user_id}", response_model=schemas.User)
-async def patch_user(user_id: int, user: schemas.UserPatch, db: Session = Depends(get_db)):
+@router.patch("/{user_id}" , tags=["User"],  response_model=schemas.User)
+async def patch_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_id(db, user_id)
-    role_id = user.role.id
+    role_id = user.role_id
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
     user_data = user.dict(exclude_unset=True)
     role = dependencies.get_by_id(role_id, roles.models.Role, db)
-    if user.password == '':
-        user_data["password"] = db_user["password"]
+    if user.password == '' or user.password is None:
+        user_data["password"] = getattr(db_user, "password")
     else:
         salt = bcrypt.gensalt()
         user_data["password"] = bcrypt.hashpw(str.encode(user_data["password"]), salt)
     for key, value in user_data.items():
         if key == 'role':
             setattr(db_user, key, role)
+        elif key == 'wallpaper':
+            setattr(db_user, key, None)
         else:
             setattr(db_user, key, value)
     db.add(db_user)

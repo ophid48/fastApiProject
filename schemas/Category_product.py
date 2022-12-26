@@ -24,7 +24,7 @@ class ProductBase(BaseModel):
     price: float
     material: Optional[str] = None
     size: Optional[str] = None
-    weight: Optional[float] = None
+    weight: Optional[str] = None
     colors: Optional[str] = None
     categoryId: int
 
